@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:marketplace/providers/cart.dart';
 import 'package:marketplace/providers/products.dart';
 import 'package:marketplace/screens/product_detail_screen.dart';
 import 'package:marketplace/screens/products_overview_screen.dart';
@@ -14,8 +16,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Products(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Cart(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Marketplace app',
         theme: ThemeData(

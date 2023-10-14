@@ -17,7 +17,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  bool filteredOption = false;
+  bool _filteredOption = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +29,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               onSelected: (FilterOptions selectedValue) {
                 setState(() {
                   if (selectedValue == FilterOptions.favorites) {
-                    filteredOption = true;
+                    _filteredOption = true;
                   } else {
-                    filteredOption = false;
+                    _filteredOption = false;
                   }
                 });
               },
@@ -49,7 +49,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               }),
         ],
       ),
-      body: ProductsGrid(filteredProducts: filteredOption),
+      body: ProductsGrid(filteredProducts: _filteredOption),
     );
   }
 }
