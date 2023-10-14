@@ -1,35 +1,55 @@
 import 'package:flutter/material.dart';
 
-import 'package:marketplace/widgets/product_item.dart';
 import 'package:provider/provider.dart';
 import '../providers/products.dart';
-import '../providers/product.dart';
+import '../widgets/products_grid.dart';
 
-class ProductsOverviewScreen extends StatelessWidget {
+enum FilterOptions {
+  favorites,
+  all
+}
+
+class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final products = Provider.of<Products>(context);
-    final loadedProducts = products.items;
+  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
+}
 
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  bool filteredOption = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Marketplace"),
+        actions: [
+          PopupMenuButton(
+              onSelected: (FilterOptions selectedValue) {
+                setState(() {
+                  if (selectedValue == FilterOptions.favorites) {
+                    filteredOption = true;
+                  } else {
+                    filteredOption = false;
+                  }
+                });
+              },
+              itemBuilder: (_) {
+                return [
+                  const PopupMenuItem(
+                    value: FilterOptions.all,
+                    child: Text("Show all"),
+                  ),
+                  const PopupMenuItem(
+                    value: FilterOptions.favorites,
+                    child: Text("Favorites"),
+                  ),
+                ];
+              }),
+        ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            childAspectRatio: 3 / 2),
-        itemBuilder: (context, index) => ChangeNotifierProvider.value(
-           value: loadedProducts[index],
-          child : const ProductItem(),
-        ),
-        itemCount: loadedProducts.length,
-      ),
+      body: ProductsGrid(filteredProducts: filteredOption),
     );
   }
 }
