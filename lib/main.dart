@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:marketplace/providers/cart.dart';
 import 'package:marketplace/providers/products.dart';
+import 'package:marketplace/screens/cart_screen.dart';
 import 'package:marketplace/screens/product_detail_screen.dart';
 import 'package:marketplace/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         // home: const ProductsOverviewScreen(),
         routes: {
           '/': (context) => const ProductsOverviewScreen(),
-          ProductDetailScreen.route: (context) => const ProductDetailScreen()
+          ProductDetailScreen.route: (context) => const ProductDetailScreen(),
+          CartScreen.routeName: (context) => const CartScreen()
         },
         onUnknownRoute: (_) {
           return MaterialPageRoute(

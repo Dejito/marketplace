@@ -3,12 +3,15 @@ import 'package:marketplace/providers/product.dart';
 import 'package:marketplace/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/cart.dart';
+
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key});
 
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
 
     return ClipRRect(
       borderRadius: const BorderRadius.all(
@@ -35,7 +38,9 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           trailing: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(product.id, product.price, product.title);
+            },
             icon: const Icon(Icons.shopping_cart),
           ),
           backgroundColor: Colors.black54,
