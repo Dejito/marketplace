@@ -8,25 +8,43 @@ class CartItem {
   final double price;
 
   CartItem(
-      {
-        required this.id,
-        required this.prodId,
+      {required this.id,
+      required this.prodId,
       required this.title,
       required this.quantity,
       required this.price});
 }
 
 class Cart with ChangeNotifier {
-   Map<String, CartItem> _items = {};
+  Map<String, CartItem> _items = {};
 
   Map<String, CartItem> get items {
     return {..._items};
   }
 
-
   int get getCartItems {
     return _items.length;
-}
+  }
+
+  void removeSingleItem(String prodId) {
+    if (!_items.containsKey(prodId)) {
+      return;
+    }
+    if (_items[prodId]!.quantity > 1) {
+      _items.update(
+        prodId,
+        (existingCartItem) => CartItem(
+            id: existingCartItem.id,
+            prodId: prodId,
+            title: existingCartItem.title,
+            quantity: existingCartItem.quantity - 1,
+            price: existingCartItem.price ),
+      );
+    } else {
+      _items.remove(prodId);
+    }
+    notifyListeners();
+  }
 
   void clearCart() {
     _items = {};
@@ -55,7 +73,8 @@ class Cart with ChangeNotifier {
               id: existingCartItem.id,
               title: existingCartItem.title,
               quantity: existingCartItem.quantity + 1,
-              price: existingCartItem.price, prodId: prodId));
+              price: existingCartItem.price,
+              prodId: prodId));
     } else {
       _items.putIfAbsent(
           prodId,
@@ -63,7 +82,8 @@ class Cart with ChangeNotifier {
               id: DateTime.now().toString(),
               title: title,
               quantity: 1,
-              price: price, prodId: prodId = prodId));
+              price: price,
+              prodId: prodId = prodId));
     }
     notifyListeners();
   }
