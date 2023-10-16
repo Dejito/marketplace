@@ -4,6 +4,7 @@ import 'package:marketplace/providers/cart.dart';
 import 'package:marketplace/providers/orders.dart';
 import 'package:marketplace/providers/products.dart';
 import 'package:marketplace/screens/cart_screen.dart';
+import 'package:marketplace/screens/orders_screen.dart';
 import 'package:marketplace/screens/product_detail_screen.dart';
 import 'package:marketplace/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,8 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const ProductsOverviewScreen(),
           ProductDetailScreen.route: (context) => const ProductDetailScreen(),
-          CartScreen.routeName: (context) => const CartScreen()
+          CartScreen.routeName: (context) => const CartScreen(),
+          OrdersScreen.routeName: (context) => const OrdersScreen()
         },
         onUnknownRoute: (_) {
           return MaterialPageRoute(

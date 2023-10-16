@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace/screens/cart_screen.dart';
+import 'package:marketplace/widgets/app_drawer.dart';
 import 'package:marketplace/widgets/badge.dart';
 
 import 'package:provider/provider.dart';
@@ -61,6 +62,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: ProductsGrid(filteredProducts: _filteredOption),
     );
   }
