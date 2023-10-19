@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:marketplace/providers/product.dart';
 import 'package:marketplace/screens/cart_screen.dart';
 import 'package:marketplace/widgets/app_drawer.dart';
 import 'package:marketplace/widgets/badge.dart';
 
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
+import '../providers/products.dart';
 import '../widgets/products_grid.dart';
 
 enum FilterOptions { favorites, all }
@@ -17,7 +19,34 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+
+  // @override
+  // void initState() {
+  //   Future.delayed(const Duration(seconds: 0)).then((_) => Provider.of<Products>(context, listen: false).fetchAndSetProducts());
+  //   super.initState();
+  // }
+
+  var _isInit = true;
+  var _isLoading = false;
   bool _filteredOption = false;
+
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +92,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGrid(filteredProducts: _filteredOption),
+      body: _isLoading ? const Center(child: CircularProgressIndicator(),) : ProductsGrid(filteredProducts: _filteredOption),
     );
   }
 }

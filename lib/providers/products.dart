@@ -6,7 +6,7 @@ import 'product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
-  final List<Product> _items = [
+  List<Product> _items = [
     Product(
       id: 'p1',
       title: 'Red Shirt',
@@ -56,6 +56,31 @@ class Products with ChangeNotifier {
   static const baseUrl =
       "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json";
 
+  Future<void> fetchAndSetProducts() async {
+    try{
+      final response = await http.get(Uri.parse(baseUrl));
+      final decodedData = json.decode(response.body) as Map<String, dynamic>;
+      List<Product> loadedData = [];
+      decodedData.forEach((prodID, prodData) {
+        loadedData.add(
+            Product(
+                id: prodID,
+                title: prodData['title'],
+                description: prodData['description'],
+                imageUrl: prodData['imageUrl'],
+                price: prodData['price'],
+                isFavorite:prodData['isFavorite']
+            )
+        );
+      });
+      // _items = loadedData;
+      notifyListeners();
+      // print(json.decode(response.body));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> addProduct(Product product) async {
     try {
       final response = await http.post(
@@ -89,8 +114,10 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == prodId);
     if (prodIndex >= 0) {
       _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+
     }
-    notifyListeners();
   }
 
   void deleteProduct(String prodId) {

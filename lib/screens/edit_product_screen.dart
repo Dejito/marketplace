@@ -21,6 +21,10 @@ class EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _isInit = true;
+  var _isId = "";
+
+
   var _editedProduct = Product(
     id: '',
     title: '',
@@ -43,23 +47,21 @@ class EditProductScreenState extends State<EditProductScreen> {
 
   @override
   void didChangeDependencies() {
-    bool isLoaded = false;
-    final prodId = ModalRoute.of(context)?.settings.arguments as String?;
-    if (!isLoaded) {
-      if (prodId != null) {
-        final newProd =
-            Provider.of<Products>(context, listen: false).findById(prodId);
-        _initValues = {
-          'id': newProd.id,
-          'title': newProd.title,
-          'description': newProd.description,
-          'price': newProd.price.toString(),
-          'imageUrl': newProd.imageUrl,
-        };
-        _imageUrlController.text = newProd.imageUrl;
-      }
+    if (_isInit) {
+      final prodId = ModalRoute.of(context)?.settings.arguments as String?;
+      _isId = prodId!;
+      _editedProduct =
+          Provider.of<Products>(context, listen: false).findById(prodId);
+      _initValues = {
+        'id': _editedProduct.id,
+        'title': _editedProduct.title,
+        'description': _editedProduct.description,
+        'price': _editedProduct.price.toString(),
+        'imageUrl': _editedProduct.imageUrl,
+      };
+      _imageUrlController.text = _editedProduct.imageUrl;
     }
-    isLoaded = true;
+    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -95,13 +97,14 @@ class EditProductScreenState extends State<EditProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedProduct.id.isNotEmpty) {
+    if (_isId.isNotEmpty) {
+      print(_isId);
       Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
-      // print("edit ${_editedProduct.id}");
+          .updateProduct(_isId, _editedProduct);
+      print("edit ${_editedProduct.id}");
       Navigator.of(context).pop();
     } else {
-      // print("no id  ${_editedProduct.id}");
+      print("no id  ${_editedProduct.id}");
       try {
 
         await Provider.of<Products>(context, listen: false)
