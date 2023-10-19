@@ -12,10 +12,15 @@ class ProductsGrid extends StatelessWidget {
 
   final bool filteredProducts;
 
+
   @override
   Widget build(BuildContext context) {
+    var i = 0;
     final loadedProducts = filteredProducts ? Provider.of<Products>(context).favoriteItems : Provider.of<Products>(context).items;
-
+    // for (i = 0; i < loadedProducts.length; i++) {
+    //   print(i);
+    // }
+    // print(loadedProducts);
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

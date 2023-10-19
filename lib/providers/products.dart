@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'product.dart';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
-
   final List<Product> _items = [
     Product(
       id: 'p1',
@@ -39,29 +41,60 @@ class Products with ChangeNotifier {
     ),
   ];
 
-  late bool showFavorites;
-
-  // void showFavoritesItems() {
-  //   showFavorites = true;
-  //   notifyListeners();
-  // }
-  //
-  // void showAllItems() {
-  //   showFavorites = false;
-  //   notifyListeners();
-  // }
-
   List<Product> get items {
     return [..._items];
   }
 
-  List<Product> get favoriteItems  {
-      return _items.where((element) => element.isFavorite).toList();
+  List<Product> get favoriteItems {
+    return _items.where((element) => element.isFavorite).toList();
   }
 
-  Product findById (String id) {
+  Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
+  static const baseUrl =
+      "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json";
 
+  Future<void> addProduct(Product product) async {
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl),
+        body: json.encode({
+          // "id": DateTime.now().toString(),
+          "title": product.title,
+          "description": product.description,
+          "imageUrl": product.imageUrl,
+          "price": product.price,
+          'isFavorite': product.isFavorite,
+        }),
+      );
+      final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: json.decode(response.body)['name'],
+        isFavorite: product.isFavorite,
+
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  void updateProduct(String prodId, Product newProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == prodId);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+    }
+    notifyListeners();
+  }
+
+  void deleteProduct(String prodId) {
+    _items.removeWhere((product) => product.id == prodId);
+    notifyListeners();
+  }
 }
