@@ -60,6 +60,9 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
+      if (response.body == 'null') {
+        return;
+      }
       final decodedData = json.decode(response.body) as Map<String, dynamic>;
       List<Product> loadedData = [];
       decodedData.forEach((prodID, prodData) {
@@ -137,7 +140,6 @@ class Products with ChangeNotifier {
     final response = await http.delete(Uri.parse(baseUrl));
 
     if (response.statusCode >= 400) {
-      print(response.statusCode);
       _items.insert(deletedProdIndex, deletedProduct);
       notifyListeners();
       throw HttpException("Something went wrong!");
