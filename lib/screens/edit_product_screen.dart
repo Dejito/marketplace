@@ -24,7 +24,6 @@ class EditProductScreenState extends State<EditProductScreen> {
   bool _isInit = true;
   var _isId = "";
 
-
   var _editedProduct = Product(
     id: '',
     title: '',
@@ -98,19 +97,13 @@ class EditProductScreenState extends State<EditProductScreen> {
       _isLoading = true;
     });
     if (_isId.isNotEmpty) {
-      print(_isId);
-      Provider.of<Products>(context, listen: false)
+     await Provider.of<Products>(context, listen: false)
           .updateProduct(_isId, _editedProduct);
-      print("edit ${_editedProduct.id}");
-      Navigator.of(context).pop();
-    } else {
-      print("no id  ${_editedProduct.id}");
-      try {
 
+    } else {
+      try {
         await Provider.of<Products>(context, listen: false)
             .addProduct(_editedProduct);
-        // Navigator.of(context).pop();
-        print("nav called");
       } catch (e) {
         await showDialog(
             context: context,
@@ -128,13 +121,14 @@ class EditProductScreenState extends State<EditProductScreen> {
               );
             });
       }
-      finally {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
-      }
+      // finally {
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   Navigator.of(context).pop();
+      // }
     }
+    Navigator.of(context).pop();
   }
 
   @override
