@@ -8,26 +8,22 @@ import '../widgets/order_item.dart';
 class OrdersScreen extends StatefulWidget {
   static const routeName = "orders_screen";
 
-  const OrdersScreen({super.key});
+    const OrdersScreen({super.key});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  bool _isLoading = false;
+  late Future _ordersFuture;
+
+  Future _obtainFutureOrders(BuildContext context) {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrder();
+  }
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) async {
-      setState(() {
-        _isLoading = true;
-      });
-      await Provider.of<Orders>(context, listen: false).fetchAndSetOrder();
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    _ordersFuture = _obtainFutureOrders(context);
     super.initState();
   }
 
@@ -39,18 +35,36 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: const Text('Your Orders'),
       ),
       drawer: const AppDrawer(),
-      body: _isLoading
-          ? const Center(
+      body: FutureBuilder(
+        future: _ordersFuture,
+        builder: (context, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
               child: CircularProgressIndicator(),
-            )
-          : orderData.orders.isEmpty
-              ? const Center(
-                  child: Text("You haven't added any orders!"),
-                )
-              : ListView.builder(
-                  itemCount: orderData.orders.length,
-                  itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
-                ),
+            );
+          } else {
+            if (dataSnapshot.hasError) {
+              return const Center(
+                child: Text("Something went wrong!"),
+              );
+            }
+            // else if (dataSnapshot.) {
+            //   return const Center(
+            //     child: Text("You haven't added any orders!"),
+            //   );
+            // }
+          }
+          return Consumer(
+            builder: (BuildContext context, value, Widget? child) {
+              return ListView.builder(
+                itemCount: orderData.orders.length,
+                itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
+              );
+            },
+          );
+
+        },
+      ),
     );
   }
 }
