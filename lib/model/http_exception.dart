@@ -9,6 +9,5 @@ class HttpException implements Exception {
   String toString() {
     return message;
     // TODO: implement toString
-    return super.toString();
   }
 }

@@ -21,7 +21,7 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    // final orders = Provider.of<Orders>(context, listen: false);
+    final orders = Provider.of<Orders>(context, listen: false);
     return Card(
       margin: const EdgeInsets.all(10),
       child: Column(
@@ -36,7 +36,6 @@ class _OrderItemState extends State<OrderItem> {
               onPressed: () {
                 setState(() {
                   _expanded = !_expanded;
-                  // print(_expanded);
                 });
               },
             ),
