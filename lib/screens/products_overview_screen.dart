@@ -21,7 +21,6 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-
   // @override
   // void initState() {
   //   Future.delayed(const Duration(seconds: 0)).then((_) => Provider.of<Products>(context, listen: false).fetchAndSetProducts());
@@ -31,7 +30,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _isInit = true;
   var _isLoading = false;
   bool _filteredOption = false;
-
 
   @override
   void didChangeDependencies() {
@@ -43,12 +41,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         setState(() {
           _isLoading = false;
         });
-      });
+      }).catchError(
+        (e) {
+          print('error caught');
+        },
+      );
     }
     _isInit = false;
     super.didChangeDependencies();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: _isLoading ? const Center(child: CircularProgressIndicator(),) : ProductsGrid(filteredProducts: _filteredOption),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(filteredProducts: _filteredOption),
     );
   }
 }

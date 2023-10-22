@@ -7,6 +7,11 @@ import 'product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
+
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -54,13 +59,17 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  static const baseUrl =
+  final baseUrl =
       "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json";
 
   Future<void> fetchAndSetProducts() async {
+    // print("is authToken $authToken");
+    final baseUrls = "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json?auth=$authToken";
+    print("base url>>>>>> $baseUrls");
     try {
-      final response = await http.get(Uri.parse(baseUrl));
-      if (response.body == 'null') {
+      final response = await http.get(Uri.parse(baseUrls));
+      print("resp body ${json.decode(response.body)}");
+      if (json.decode(response.body) == 'null') {
         return;
       }
       final decodedData = json.decode(response.body) as Map<String, dynamic>;

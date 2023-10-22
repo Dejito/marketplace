@@ -6,6 +6,26 @@ import 'package:http/http.dart' as http;
 import 'package:marketplace/model/http_exception.dart';
 
 class Auth extends ChangeNotifier {
+
+  DateTime? _expiryDate;
+  String? _token;
+  String? _userId;
+  bool isSetLoginToken = false;
+  String loginToken = "";
+
+  // bool? get isAuth {
+  //   return token != null;
+  // }
+
+  void get token {
+    if (_token != null && _expiryDate!.isAfter(DateTime.now()) && _userId != null ) {
+      isSetLoginToken = true;
+      // return loginToken;
+    } else {
+      return ;
+    }
+  }
+
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     final url =
@@ -18,13 +38,16 @@ class Auth extends ChangeNotifier {
         ),
       );
       final responseData = json.decode(response.body);
-      // final errMessage = (responseData['error']['message']);
-      // print('error message');
-      // print('got here ${responseData['error']['message']}');
+      print(">>>>>> $responseData");
       if (responseData['error'] != null) {
-        print('error thrown');
         throw HttpException(responseData['error']['message']);
       }
+      _userId = responseData['localId'];
+      _token = responseData['idToken'];
+      loginToken = responseData['idToken'];
+      _expiryDate = DateTime.now().add(const Duration(hours: 1));
+      token;
+      notifyListeners();
       // print(response.body);
     } catch (e) {
       rethrow;
@@ -36,6 +59,6 @@ class Auth extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-    return _authenticate(email, password, 'signIn');
+    return _authenticate(email, password, 'signInWithPassword');
   }
 }
