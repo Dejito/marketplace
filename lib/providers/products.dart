@@ -59,9 +59,6 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  final baseUrl =
-      "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json";
-
   Future<void> fetchAndSetProducts() async {
     // print("is authToken $authToken");
     final baseUrls = "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json?auth=$authToken";
@@ -92,6 +89,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
+    final baseUrl =
+        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products.json?auth=$authToken";
     try {
       final response = await http.post(
         Uri.parse(baseUrl),
@@ -121,7 +120,7 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String prodId, Product newProduct) async {
     final baseUrl =
-        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products/$prodId.json";
+        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products/$prodId.json?auth=$authToken";
     await http.patch(
       Uri.parse(baseUrl), // final response =
       body: json.encode({
@@ -141,7 +140,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String prodId) async {
     final baseUrl =
-        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products/$prodId.json";
+        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/products/$prodId.json?auth=$authToken";
     final deletedProdIndex = _items.indexWhere((element) => prodId == element.id);
     final deletedProduct = _items[deletedProdIndex];
     _items.removeAt(deletedProdIndex);

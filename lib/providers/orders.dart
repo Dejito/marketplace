@@ -20,6 +20,11 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
+
+  final String authToken;
+
+  Orders(this.authToken);
+
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -27,8 +32,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrder() async {
-    const baseUrl =
-        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/orders.json";
+    final baseUrl =
+        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
     final response = await http.get(Uri.parse(baseUrl));
     if (response.body == 'null') {
       print("stopped here");
@@ -65,8 +70,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const baseUrl =
-        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/orders.json";
+    final baseUrl =
+        "https://marketplace-f3f0d-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
     final dateTime = DateTime.now().toIso8601String();
     final response = await http.post(Uri.parse(baseUrl),
         body: json.encode(

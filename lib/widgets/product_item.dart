@@ -3,6 +3,7 @@ import 'package:marketplace/providers/product.dart';
 import 'package:marketplace/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth.dart';
 import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
@@ -12,7 +13,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
-
+    final auth = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: const BorderRadius.all(
         Radius.circular(10),
@@ -27,7 +28,7 @@ class ProductItem extends StatelessWidget {
           leading: Consumer<Product>(
             builder: (context, product, child) => IconButton(
               onPressed: () {
-                product.toggleFavoriteStatus();
+                product.toggleFavoriteStatus(auth.loginToken);
               },
               icon: Icon(
                 product.isFavorite == true
