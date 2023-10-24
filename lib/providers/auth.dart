@@ -1,9 +1,12 @@
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:marketplace/model/http_exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth extends ChangeNotifier {
 
@@ -12,6 +15,7 @@ class Auth extends ChangeNotifier {
   String? _userId;
   bool isSetLoginToken = false;
   String loginToken = "";
+  Timer? _authTimer;
 
   // bool? get isAuth {
   //   return token != null;
@@ -38,7 +42,7 @@ class Auth extends ChangeNotifier {
         ),
       );
       final responseData = json.decode(response.body);
-      // print(">>>>>> $responseData");
+      print(">>>>>> $responseData");
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       }
@@ -61,4 +65,19 @@ class Auth extends ChangeNotifier {
   Future<void> signIn(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
+
+  Future<void> logout() async {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    if (_authTimer != null) {
+      _authTimer!.cancel();
+      _authTimer = null;
+    }
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    // prefs.remove('userData');
+    prefs.clear();
+  }
+
 }
